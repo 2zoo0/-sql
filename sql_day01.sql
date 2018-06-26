@@ -300,3 +300,63 @@ MANAGER
 CLERK
 ANALYST
 ---------*/
+
+-- (5) WHERE 조건절
+--  16) emp 테이블에서 empno 가 7900인 사원의
+--      사번, 이름, 직무, 입사일, 급여 , 부서번호 조회
+SELECT e.EMPNO
+     , e.ENAME
+     , e.JOB
+     , e.HIREDATE
+     , e.SAL
+     , e.DEPTNO
+  FROM emp e
+ WHERE e.EMPNO = 7900
+;
+/*----------------------------------------
+EMPNO, ENAME, JOB, HIREDATE, SAL, DEPTNO
+------------------------------------------
+7900	JAMES	CLERK	81/12/03	950	30
+------------------------------------------*/
+
+-- 17) emp 테이블에서 empno 는 7900 이거나 deptno 가 20인 직원의 정보를 조회
+--     사번, 이름, 직무, 입사일, 급여 , 부서번호 조회
+
+SELECT e.EMPNO
+     , e.ENAME
+     , e.JOB
+     , e.HIREDATE
+     , e.SAL
+     , e.DEPTNO
+  FROM emp e
+ WHERE e.EMPNO = 7900
+    OR e.DEPTNO = 20
+;
+
+/*---------------------------------------------
+EMPNO, ENAME, JOB, HIREDATE, SAL, DEPTNO
+-----------------------------------------------
+7369	SMITH	CLERK	80/12/17	800	    20
+7566	JONES	MANAGER	81/04/02	2975	20
+7900	JAMES	CLERK	81/12/03	950	    30
+7902	FORD	ANALYST	81/12/03	3000	20
+-----------------------------------------------*/
+
+-- 18) 17의 조회조건을 AND 조건으로 조합
+--     empno 가 7900 이고 deptno 가 20 인 직원의 정보를 조회
+--     사번, 이름, 직무, 입사일, 급여 , 부서번호 조회
+
+SELECT e.EMPNO
+     , e.ENAME
+     , e.JOB
+     , e.HIREDATE
+     , e.SAL
+     , e.DEPTNO
+  FROM emp e
+ WHERE e.EMPNO = 7900
+   AND e.DEPTNO = 20
+;
+-- 인출된 모든 행 : 0
+/*---------------------------------------------
+EMPNO, ENAME, JOB, HIREDATE, SAL, DEPTNO
+-----------------------------------------------*/
