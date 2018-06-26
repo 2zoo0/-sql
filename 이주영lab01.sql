@@ -88,6 +88,11 @@ SELECT e.EMPNO as "사번"
 -- 실습 10)
 SELECT e.EMPNO as "사번"
      , e.ENAME as "이름"
+     , e.SAL + e.COMM as "급여 + 커미션"
+  FROM emp e
+;
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
      , e.SAL + nvl(e.COMM, 0) as "급여 + 커미션"
   FROM emp e
 ;
@@ -111,6 +116,14 @@ SELECT e.EMPNO as "사번"
 ;
 
 -- 실습 13)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.SAL + e.COMM as "급여 + 커미션"
+  FROM emp e
+ WHERE e.ENAME = 'MARTIN' 
+    OR e.ENAME =  'BLAKE'
+;
 SELECT e.EMPNO as "사번"
      , e.ENAME as "이름"
      , e.JOB as "직책"
