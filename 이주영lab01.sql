@@ -119,3 +119,192 @@ SELECT e.EMPNO as "사번"
  WHERE e.ENAME = 'MARTIN' 
     OR e.ENAME =  'BLAKE'
 ;
+
+-- 실습 14) 
+-- 1
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e
+ WHERE COMM != 0
+;
+-- 2
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e
+ WHERE COMM > 0
+;
+--3
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e
+ WHERE COMM >= 0
+;
+
+-- 실습 15)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e
+ WHERE COMM IS NOT NULL
+;
+
+-- 실습 16)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.DEPTNO = 20
+   AND SAL >= 2500
+;
+
+-- 실습 17)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.JOB = 'MANAGER'
+    OR e.DEPTNO = 10
+;
+
+-- 실습 18)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.JOB IN('MANAGER', 'CLERK', 'SALESMAN')
+;
+
+-- 실습 19)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.ENAME LIKE 'A%'
+;
+
+-- 실습 20)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.ENAME LIKE '%A%'
+;
+
+-- 실습 21)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.ENAME LIKE '%S'
+;
+
+-- 실습 22)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.ENAME LIKE '%E_'
+;
+
+-- 실습 23)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.SAL BETWEEN 2500 AND 3000
+;
+
+-- 실습 24)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.COMM IS NULL
+;
+
+-- 실습 25)
+SELECT e.EMPNO as "사번"
+     , e.ENAME as "이름"
+     , e.JOB as "직책"
+     , e.MGR as "상관"
+     , e.HIREDATE as "입사일"
+     , e.SAL as "급여"
+     , e.COMM as "수당"
+     , e.DEPTNO as "부서번호"
+  FROM emp e 
+ WHERE e.COMM IS NOT NULL
+;
+
+-- 실습 26)
+SELECT  e.EMPNO || ' ' || e.ENAME || '의 월급은 $' || e.SAL || ' 입니다.' as "사번 월급여"
+  FROM emp e 
+ WHERE e.EMPNO <= (SELECT e.EMPNO FROM emp e WHERE e.ENAME = 'JONES') 
+;
