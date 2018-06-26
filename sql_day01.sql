@@ -561,8 +561,73 @@ SELECT e.EMPNO
  WHERE e.SAL >= 2000
 ;
 
+--(6) 련산자 : 4. SQL 연산자
+--- IN 연산자 : 비교하고자 하는 기준 값이 제시된 항목 목록에 존재하면 참으로 판단
 
+--- 25) 급여가 800, 3000, 5000 중에 하나인 직원의 사번, 이름, 급여를 조회
+SELECT e.EMPNO
+     , e.ENAME
+     , e.SAL
+  FROM emp e
+ WHERE e.SAL = 800
+    OR e.SAL = 3000
+    OR e.SAL = 5000
+; 
+-- IN 연산자를 사용하여 해결
+SELECT e.EMPNO
+     , e.ENAME
+     , e.SAL
+  FROM emp e
+ WHERE e.SAL IN (800, 3000, 5000)
+; 
 
+--- LIKE 연산자 : 유사값을 검색하는데 사용
+/* LIKE 연산자는 유사 값 검색을 위해 함께 사용하는 패턴 인식 문자가 있다.
+   % : 0자릿수 이상의 모든 문자 패턴이 올 수 있음
+   _ : 1자리의 모든 문자 패턴이 올 수 있음
+*/
+
+--- 26) 이름이 J 로 시작하는 직원의 사번, 이름 조회
+SELECT e.EMPNO
+     , e.ENAME
+  FROM emp e
+ WHERE e.ENAME LIKE 'J%'
+;
+-- 이름에 M 이 들어가는 직원의 사번, 이름 조회
+SELECT e.EMPNO
+     , e.ENAME
+  FROM emp e
+ WHERE e.ENAME LIKE '%M%'
+;
+-- 이름의 두번째 자리에 M 이 들어가는 직원의 사번, 이름 조회
+SELECT e.EMPNO
+     , e.ENAME
+  FROM emp e
+ WHERE e.ENAME LIKE '_M%' -- 유사 패턴 인식 문자로 _를 사용하여 한 글자로 제한
+;
+
+-- 이름의 세번째 자리에 M 이 들어가는 직원의 사번, 이름 조회
+SELECT e.EMPNO
+     , e.ENAME
+  FROM emp e
+ WHERE e.ENAME LIKE '__M%' -- 유사 패턴 인식 문자로 _를 사용하여 앞자리를 2글자로 제한
+;
+
+-- 이름의 두번째 자리에 LA 가 들어가는 직원의 사번, 이름 조회
+SELECT e.EMPNO
+     , e.ENAME
+  FROM emp e
+ WHERE e.ENAME LIKE '_LA%'
+;
+
+SELECT e.EMPNO
+     , e.ENAME
+  FROM emp e
+ WHERE e.ENAME LIKE 'J\_%' ESCAPE '\'
+;
+/* EMPNO, ENAME
+9999	J_JUN
+*/
 
 ---------- 집합연산자 ----------
 ------------------------------
