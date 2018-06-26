@@ -156,7 +156,7 @@ SELECT e.EMPNO as "사번"
      , e.COMM as "수당"
      , e.DEPTNO as "부서번호"
   FROM emp e
- WHERE COMM > 0
+ WHERE NOT COMM = 0
 ;
 --3
 SELECT e.EMPNO as "사번"
