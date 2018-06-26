@@ -525,6 +525,44 @@ SELECT  e.EMPNO
      , e.SAL +e.COMM "급여 + 수당"
   FROM emp e
 ;
+/*
+EMPNO, ENAME, JOB, 급여 + 수당
+----------------------------------
+7369	SMITH	CLERK	
+7499	ALLEN	SALESMAN	1900
+7521	WARD	SALESMAN	1750
+7566	JONES	MANAGER	
+7654	MARTIN	SALESMAN	2650
+7698	BLAKE	MANAGER	
+7782	CLARK	MANAGER	
+7839	KING	PRESIDENT	
+7844	TURNER	SALESMAN	1500
+7900	JAMES	CLERK	
+7902	FORD	ANALYST	
+7934	MILLER	CLERK	
+숫자와 (null)의 산술연산값은 결국 (null)이다.
+*/
+
+--(6) 연산자 : 3. 논리련산자
+--- NOT 연산자
+
+--- 24) 급여가 2000 보다 적지 않은 직원의 사번, 이름, 급여를 조회
+SELECT e.EMPNO
+     , e.ENAME
+     , e.SAL
+  FROM emp e
+ WHERE NOT e.SAL < 2000
+;
+--동일 결과를 내는 다른 쿼리 NOT 사용하지 않음
+SELECT e.EMPNO
+     , e.ENAME
+     , e.SAL
+  FROM emp e
+ WHERE e.SAL >= 2000
+;
+
+
+
 
 ---------- 집합연산자 ----------
 ------------------------------
