@@ -620,14 +620,27 @@ SELECT e.EMPNO
  WHERE e.ENAME LIKE '_LA%'
 ;
 
+-- 이름이 J_ 로 시작하는 직원의 사번, 이름 조회
+-- : 조회 값에 패턴인식 문자가 들어있는 데이터의 경우 어떻게 조회할 것인가?
 SELECT e.EMPNO
      , e.ENAME
   FROM emp e
  WHERE e.ENAME LIKE 'J\_%' ESCAPE '\'
 ;
 /* EMPNO, ENAME
-9999	J_JUN
+ 9999	J_JUN
 */
+-- 조회하려는 값에 들어있는 패턴인식 문자를 무효화 하려면 ESCAPE 절과 조합한다.
+
+-- 이름이 J% 로 시작하는 직원의 사번, 이름 조회
+SELECT e.EMPNO
+     , e.ENAME
+  FROM emp e
+ WHERE e.ENAME LIKE 'J\%%' ESCAPE '\'
+;
+
+
+
 
 ---------- 집합연산자 ----------
 ------------------------------
