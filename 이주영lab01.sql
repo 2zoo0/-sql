@@ -327,13 +327,12 @@ SELECT e.EMPNO as "사번"
      , e.COMM as "수당"
      , e.DEPTNO as "부서번호"
   FROM emp e
- WHERE COMM >= 0
+ WHERE COMM <> 0
 ;
 /* 사번, 이름, 직책, 상관, 입사일, 급여, 수당, 부서번호
 7499	ALLEN	SALESMAN	7698	81/02/20	1600	300	 30
 7521	WARD	SALESMAN	7698	81/02/22	1250	500	 30
 7654	MARTIN	SALESMAN	7698	81/09/28	1250	1400 30
-7844	TURNER	SALESMAN	7698	81/09/08	1500	0	 30
 */
 
 -- 실습 15)
@@ -492,6 +491,16 @@ SELECT e.EMPNO as "사번"
 7934	MILLER	CLERK	 7782	82/01/23	1300		10
 */
 
+
+
+
+
+------------------------------- 과제 1 - 2018 - 06 - 26 -------------------------------
+
+
+
+
+
 -- 실습 23)
 SELECT e.EMPNO as "사번"
      , e.ENAME as "이름"
@@ -553,9 +562,21 @@ SELECT e.EMPNO as "사번"
 */
 
 -- 실습 26)
+SELECT e.EMPNO 
+  FROM emp e 
+ WHERE e.ENAME = 'JONES';
+
 SELECT  e.EMPNO || ' ' || e.ENAME || '의 월급은 $' || e.SAL || ' 입니다.' as "사번 월급여"
   FROM emp e 
  WHERE e.EMPNO <= (SELECT e.EMPNO FROM emp e WHERE e.ENAME = 'JONES') 
+;
+SELECT  e.EMPNO || ' ' || e.ENAME || '의 월급은 $' || e.SAL || ' 입니다.' as "사번 월급여"
+  FROM emp e 
+ WHERE e.HIREDATE <= (SELECT e.HIREDATE FROM emp e WHERE e.ENAME = 'JONES') 
+;
+SELECT  e.EMPNO || ' ' || e.ENAME || '의 월급은 $' || e.SAL || ' 입니다.' as "사번 월급여"
+  FROM emp e 
+ WHERE e.HIREDATE <= (SELECT e.HIREDATE FROM emp e WHERE e.ENAME = 'JONES') 
 ;
 /* 사번 월급여
 7369 SMITH의 월급은 $800 입니다.
