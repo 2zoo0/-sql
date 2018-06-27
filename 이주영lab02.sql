@@ -275,6 +275,16 @@ SELECT e.EMPNO
 SELECT e.EMPNO as "사원번호"
      , UPPER(e.ENAME) as "이름"
      , e.SAL as "급여"
+     , '$' || DECODE(e.JOB, 'CLERK', '300',
+                     'SALESMAN', '450',
+                     'MANAGER', '600',
+                     'ANALYST', '800',
+                     'PRESIDENT', '1000') as "자기계발비"
+  FROM emp e
+;
+SELECT e.EMPNO as "사원번호"
+     , UPPER(e.ENAME) as "이름"
+     , e.SAL as "급여"
      , TO_CHAR(DECODE(e.JOB, 'CLERK', '300',
                      'SALESMAN', '450',
                      'MANAGER', '600',
@@ -303,6 +313,18 @@ SELECT e.EMPNO as "사원번호"
 */
 
 -- 실습 16)
+SELECT e.EMPNO as "사원번호"
+     , UPPER(e.ENAME) as "이름"
+     , e.SAL as "급여"
+     , '$'||(CASE e.JOB WHEN 'CLERK'     THEN 300
+                           WHEN 'SALESMAN'  THEN 450
+                           WHEN 'MANAGER'   THEN 600
+                           WHEN 'ANALYST'   THEN 800
+                           WHEN 'PRESIDENT' THEN 1000
+                           ELSE 0
+                 END) as "자기계발비"
+  FROM emp e
+;
 SELECT e.EMPNO as "사원번호"
      , UPPER(e.ENAME) as "이름"
      , e.SAL as "급여"
@@ -393,7 +415,7 @@ SELECT AVG(e.SAL)
 ; -- AVG(e.SAL) = 1741.666666666666666666666666666666666667
 
 -- 실습 23)
-SELECT nvl(e.DEPTNO, 0) as "부서번호"
+SELECT nvl(e.DEPTNO || '', '부서없음') as "부서번호"
      , SUM(e.SAL) as "총합"
      , TRUNC(AVG(e.SAL), 2) as "평균"
      , MAX(e.SAL) as "최대"
@@ -403,10 +425,10 @@ SELECT nvl(e.DEPTNO, 0) as "부서번호"
 ;
 /*부서번호, 총합, 평균, 최대, 최소
 --------------------------------
-30	9400	1566.66	2850	950
-0	1200	400 	500	    300
-20	6775	2258.33	3000	800
-10	8750	2916.66	5000	1300
+30	    9400	1566.66	2850	950
+부서없음	1200	400	    500	    300
+20	    6775	2258.33	3000	800
+10	    8750	2916.66	5000	1300
 */
 
 -- 실습 24)
