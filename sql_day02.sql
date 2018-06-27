@@ -717,3 +717,4 @@ SELECT e.EMPNO
   FROM emp e
  ORDER BY "경조사비"
 ;
+select * from dual; 
