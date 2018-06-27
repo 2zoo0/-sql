@@ -638,37 +638,3 @@ SELECT e.EMPNO
   FROM emp e
  WHERE e.ENAME LIKE 'J\%%' ESCAPE '\'
 ;
-
-
-
-
----------- 집합연산자 ----------
-------------------------------
-SELECT * 
-  FROM dept
- UNION ALL -- 중복값 포함 합집합
-SELECT *
-  FROM dept
- WHERE deptno = 10
- ;
- SELECT * 
-  FROM dept
- UNION -- 중복값 제외 합집합
-SELECT *
-  FROM dept
- WHERE deptno = 10
- ;
-SELECT * 
-  FROM dept
- INTERSECT --중복값만 교집합
-SELECT *
-  FROM dept
- WHERE deptno = 10
- ;
-SELECT * 
-  FROM dept
- MINUS --중복값 제외 차집합
-SELECT *
-  FROM dept
- WHERE deptno = 10;
- ------------------------------
