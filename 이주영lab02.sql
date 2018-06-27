@@ -275,16 +275,6 @@ SELECT e.EMPNO
 SELECT e.EMPNO as "사원번호"
      , UPPER(e.ENAME) as "이름"
      , e.SAL as "급여"
-     , '$' || DECODE(e.JOB, 'CLERK', '300',
-                     'SALESMAN', '450',
-                     'MANAGER', '600',
-                     'ANALYST', '800',
-                     'PRESIDENT', '1000') as "자기계발비"
-  FROM emp e
-;
-SELECT e.EMPNO as "사원번호"
-     , UPPER(e.ENAME) as "이름"
-     , e.SAL as "급여"
      , TO_CHAR(DECODE(e.JOB, 'CLERK', '300',
                      'SALESMAN', '450',
                      'MANAGER', '600',
@@ -313,18 +303,6 @@ SELECT e.EMPNO as "사원번호"
 */
 
 -- 실습 16)
-SELECT e.EMPNO as "사원번호"
-     , UPPER(e.ENAME) as "이름"
-     , e.SAL as "급여"
-     , '$'||(CASE e.JOB WHEN 'CLERK'     THEN 300
-                           WHEN 'SALESMAN'  THEN 450
-                           WHEN 'MANAGER'   THEN 600
-                           WHEN 'ANALYST'   THEN 800
-                           WHEN 'PRESIDENT' THEN 1000
-                           ELSE 0
-                 END) as "자기계발비"
-  FROM emp e
-;
 SELECT e.EMPNO as "사원번호"
      , UPPER(e.ENAME) as "이름"
      , e.SAL as "급여"
