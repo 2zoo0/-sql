@@ -203,8 +203,67 @@ SELECT COUNT(DISTINCT e.MGR) as "매니저 직원 직원수"
 SELECT DISTINCT e.DEPTNO
   FROM emp e
 ;
+
+-- COUNT(*) 가 아닌 COUNT(expr) 을 사용한 경우에는
+SELECT e.DEPTNO
+  FROM emp E
+ WHERE e.DEPTNO IS NOT NULL
+;
+-- 을 수행한 결과를 카운트 한 것으로 생각할 수 있다.
+
 SELECT COUNT(e.DEPTNO) as "부서 배정 인원"
      , COUNT(*) -COUNT(e.DEPTNO) as "부서 미배정 인원"
      , COUNT(*) as "전체 인원"
+  FROM emp e
+;
+
+
+--2) SUM() : NULL 항목 제외하고
+--           합산 가능한 행을 모두 더한 결과를 출력
+-- SALESMAN 들의 수당 총합을 구해보자
+SELECT SUM(e.COMM) as "SUM of SALESMAN"
+  FROM emp e
+ WHERE e.JOB = 'SALESMAN'
+;
+/*
+(null)
+300     ====>
+500     ====>
+(null)
+1400    ====> SUM(e.COMM) ====> 2200 : comm 컬럼이 NUL인 것들은 합산에서 제외
+(null)
+(null)
+(null)
+0       ====>
+(null)
+(null)
+(null)
+(null)
+(null)
+(null)
+(null)
+*/
+
+-- 수당총합 결과에 숫자 출력 패턴, 별칭
+SELECT TO_CHAR(SUM(e.COMM), '$99,999') as "수당총합"
+  FROM emp e
+ WHERE e.JOB = 'SALESMAN'
+;
+
+-- 3) AVG(expr) : NULL 값 제외하고 연산 가능한 항목의 산술 평균을 구함
+
+--  수당 평균을 구해보자
+SELECT AVG(e.COMM) as "수당 평균"
+  FROM emp e
+;
+SELECT TO_CHAR(AVG(e.COMM), '999') as "수당 평균"
+  FROM emp e
+;
+
+-- 4) MAX(expr) : expr에 등장한 값 중 최대값을 구함
+--                expr 이 문자인 경우 알파벳순 뒷쪽에 위치한 글자를 최댓값으로 계산
+
+-- 이름이 가장 나중인 직원
+SELECT MAX(e.ENAME)
   FROM emp e
 ;
