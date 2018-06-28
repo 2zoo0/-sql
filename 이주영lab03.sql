@@ -1,9 +1,11 @@
 -- lab03 실습문제 작성
+
 -- 실습 15)
 SELECT e.EMPNO as "사원번호"
      , UPPER(e.ENAME) as "이름"
      , e.SAL as "급여"
-     , TO_CHAR(DECODE(e.JOB, 'CLERK', '300',
+     , TO_CHAR(DECODE(e.JOB,
+                     'CLERK', '300',
                      'SALESMAN', '450',
                      'MANAGER', '600',
                      'ANALYST', '800',
@@ -116,9 +118,9 @@ SELECT SUM(e.SAL)
 ; -- SUM(e.SAL) = 26125
 
 -- 실습 22)
-SELECT AVG(e.SAL)
+SELECT TRUNC(AVG(e.SAL), 2)
   FROM emp e
-; -- AVG(e.SAL) = 1741.666666666666666666666666666666666667
+; -- AVG(e.SAL) = 1741.66
 
 -- 실습 23)
 SELECT nvl(e.DEPTNO || '', '부서없음') as "부서번호"
@@ -138,8 +140,8 @@ SELECT nvl(e.DEPTNO || '', '부서없음') as "부서번호"
 */
 
 -- 실습 24)
-SELECT STDDEV(e.SAL) as "표준편차"
-     , VARIANCE(e.SAL) as "분산"
+SELECT TRUNC(STDDEV(e.SAL), 2) as "표준편차"
+     , TRUNC(VARIANCE(e.SAL), 2) as "분산"
   FROM emp e
 ;
 /*
@@ -148,15 +150,15 @@ SELECT STDDEV(e.SAL) as "표준편차"
 */
 
 -- 실습 25)
-SELECT STDDEV(e.SAL) as "표준편차"
-     , VARIANCE(e.SAL) as "분산"
+SELECT TRUNC(STDDEV(e.SAL), 2) as "표준편차"
+     , TRUNC(VARIANCE(e.SAL), 2) as "분산"
      , e.JOB as "직책"
   FROM emp e
  GROUP BY e.JOB
  HAVING e.JOB = 'SALESMAN'
 ;
 /* 표준편차, 분산, 직책
-177.951304200521853513525399426595177105	31666.6666666666666666666666666666666667	SALESMAN
+177.95	31666.66	SALESMAN
 */
 
 -- 실습 26) 
