@@ -267,4 +267,48 @@ SELECT TO_CHAR(AVG(e.COMM), '999') as "수당 평균"
 SELECT MAX(e.ENAME)
   FROM emp e
 ;
--- commit --
+-------- 3. GROUP BY 절의 사용
+-- 1) emp 테이블에서 각 부서별로 급여의 총합을 조회
+
+--    총합을 구하기 위하여 SUM()을 사용
+--    그룹화 기준을 부서번호(deptno)를 사용
+--    그룹화 기준으로 잡은 부서번호가 GROUP BY 절에 등장해야 함
+
+-- a) 먼저 emp 테이블에서 급여 총합 구하는 구문을 작성
+SELECT SUM(e.SAL)
+  FROM emp e
+;
+
+ -- b) 부서번호를 기준으로 그룹화를 진행
+ --    SUM()은 그룹함수이므로 GROUP BY 절을 조합하면 그룹화 가능
+ --    그룹화를 하려면 기준 컬럼을 GROUP BY 절에 명시
+ 
+SELECT e.DEPTNO
+   --, e.JOB ORA-00979: not a GROUP BY expression
+     , SUM(e.SAL) as "급여 총합"
+  FROM emp e
+ GROUP BY e.DEPTNO
+;
+ 
+-- 부서별 급여의 총합, 평균, 최대급여, 최소급여를 구하자
+SELECT SUM(e.SAL) as "급여 총합"
+     , AVG(e.SAL) as "급여 평균"
+     , MAX(e.SAL) as "최대 급여"
+     , MIN(e.SAL) as "최소 급여"
+  FROM emp e
+ GROUP BY e.DEPTNO
+;
+SELECT SUM(e.SAL) as "급여 총합"
+     , TO_CHAR(AVG(e.SAL), '$999,999.99') as "급여 평균"
+     , MAX(e.SAL) as "최대 급여"
+     , MIN(e.SAL) as "최소 급여"
+  FROM emp e
+ GROUP BY e.DEPTNO
+;
+/* ---------------------------------------------------------------------------
+  GROUP BY 절에 등장하는 그룹화 기준 컬럼은 반드시 SELECT 절에 똑같이 등장해야 한다.
+  
+  하지만 위의 쿼리가 실행되는 이유는 
+  SELECT 절에 나열된 컬럼 중에서 그룹 함수가 사용되지 않은 컬럼이 없기 때문
+  즉, 모두 다 그룹함수가 사용된 컬럼들이기 때문
+------------------------------------------------------------------------------ */
