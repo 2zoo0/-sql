@@ -92,3 +92,119 @@ SELECT e.EMPNO
   FROM emp e
  ORDER BY "급여 등급" DESC
 ;
+
+---------- 2. 그룹함수 (복수행 함수)
+-- 1) COUNT(*) : 특징 테이빌의 행의 개수(데이터의 개수)를 세어주는 함수
+--               NULL 을 처리하는 <유일한 그룹함수>
+
+--  COUNT(expr) : expr 으로 등장한 값을 NULL 제외하고 세어주는 함수
+
+--dept, salgrade 테이블의 전체 데이터 개수 조회
+SELECT *
+  FROM dept d
+;
+
+SELECT COUNT(*) as "부서개수"
+  FROM dept d
+; -- 부서개수 = 4
+/* DEPTNO, DNAME, LOC
+-------------------------
+10	ACCOUNTING	NEW YORK  ====>
+20	RESEARCH	DALLAS    ====>   COUNT(*) = 4
+30	SALES	CHICAGO       ====>
+40	OPERATIONS	BOSTON    ====>
+*/
+
+SELECT *
+  FROM dept d
+;
+
+SELECT COUNT(*) as "급여 등급 개수"
+  FROM salgrade s
+; -- 급여 등급 개수 = 5
+
+/* DEPTNO, DNAME, LOC
+-------------------------
+10	ACCOUNTING	NEW YORK ====>
+20	RESEARCH	DALLAS   ====>  COUNT(*) = 5
+30	SALES	CHICAGO      ====>
+40	OPERATIONS	BOSTON   ====>
+*/
+
+--- emp 테이블에서 job 컬럼의 데이터 개수를 세어보자
+SELECT COUNT(DISTINCT e.JOB) as "직책 종류 수"
+  FROM emp e
+;
+
+SELECT e.EMPNO
+     , e.ENAME
+     , e.JOB
+  FROM emp e
+;
+/* EMPNO, ENAME, JOB
+-------------------------
+7369	SMITH	CLERK
+7499	ALLEN	SALESMAN
+7521	WARD	SALESMAN
+7566	JONES	MANAGER
+7654	MARTIN	SALESMAN
+7698	BLAKE	MANAGER
+7782	CLARK	MANAGER
+7839	KING	PRESIDENT
+7844	TURNER	SALESMAN
+7900	JAMES	CLERK
+7902	FORD	ANALYST
+7934	MILLER	CLERK
+6666	JJ	
+7777	J%JONES	
+8888	J	
+9999	J_JUNE	
+*/
+
+-- 회사에 매니저가 배정된 직원이 몇명인가
+SELECT e.EMPNO
+     , e.ENAME
+     , e.MGR
+  FROM emp e
+;
+/*
+7369	SMITH	7902
+7499	ALLEN	7698
+7521	WARD	7698
+7566	JONES	7839
+7654	MARTIN	7698
+7698	BLAKE	7839
+7782	CLARK	7839
+7839	KING	
+7844	TURNER	7698
+7900	JAMES	7698
+7902	FORD	7566
+7934	MILLER	7782
+6666	JJ	
+7777	J%JONES	
+8888	J	
+9999	J_JUNE	
+*/
+SELECT COUNT(e.MGR) as "상사가 있는 직원 수"
+  FROM emp e
+;
+
+-- 매니저 직을 맡고 있는 직원이 몇명인가
+--- 1. mgr 컬럼을 중복제거 하여 조회
+SELECT DISTINCT e.MGR
+  FROM emp e
+;
+--- 2. 그때의 결과를 카운트
+SELECT COUNT(DISTINCT e.MGR) as "매니저 직원 직원수"
+  FROM emp e
+;
+
+-- 부서가 배정된 직원이 몇명이나 있는가
+SELECT DISTINCT e.DEPTNO
+  FROM emp e
+;
+SELECT COUNT(e.DEPTNO) as "부서 배정 인원"
+     , COUNT(*) -COUNT(e.DEPTNO) as "부서 미배정 인원"
+     , COUNT(*) as "전체 인원"
+  FROM emp e
+;
