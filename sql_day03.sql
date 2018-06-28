@@ -289,6 +289,12 @@ SELECT e.DEPTNO
   FROM emp e
  GROUP BY e.DEPTNO
 ;
+SELECT d.DNAME as "부서명"
+     , SUM(e.SAL) as "급여 총합"
+  FROM emp e, dept d
+ WHERE e.DEPTNO = d.DEPTNO
+ GROUP BY e.DEPTNO, d.DNAME
+; -- 조인으로 부서명 출력
  
 -- 부서별 급여의 총합, 평균, 최대급여, 최소급여를 구하자
 SELECT SUM(e.SAL) as "급여 총합"
@@ -304,7 +310,10 @@ SELECT SUM(e.SAL) as "급여 총합"
      , MIN(e.SAL) as "최소 급여"
   FROM emp e
  GROUP BY e.DEPTNO
+ ORDER BY e.DEPTNO
 ;
+-- 위의 쿼리는 수행되지만 정확하게 어느 부서의 결과인지
+-- 알 수가 없다는 단점이 존재
 /* ---------------------------------------------------------------------------
   GROUP BY 절에 등장하는 그룹화 기준 컬럼은 반드시 SELECT 절에 똑같이 등장해야 한다.
   
@@ -312,3 +321,43 @@ SELECT SUM(e.SAL) as "급여 총합"
   SELECT 절에 나열된 컬럼 중에서 그룹 함수가 사용되지 않은 컬럼이 없기 때문
   즉, 모두 다 그룹함수가 사용된 컬럼들이기 때문
 ------------------------------------------------------------------------------ */
+
+-- 부서 지정 안되어서 (null) 로 표현되는 값을 "부서 미지정" 으로 출력되도록
+
+SELECT nvl(e.DEPTNO, '0') as "부서번호"
+     , SUM(e.SAL) as "급여 총합"
+     , TO_CHAR(AVG(e.SAL), '$999,999.99') as "급여 평균"
+     , MAX(e.SAL) as "최대 급여"
+     , MIN(e.SAL) as "최소 급여"
+  FROM emp e
+ GROUP BY e.DEPTNO
+;
+
+-- 부서, 직무별 급여의 총합, 평균, 최대급여, 최소급여를 구하자
+SELECT e.DEPTNO when e.DEPTNO is null then e.DEPTNO = '부서없음'
+     , e.JOB    as "직무"
+     , SUM(e.SAL) as "급여 총합"
+     , AVG(e.SAL) as "급여 평균"
+     , MAX(e.SAL) as "최대 급여"
+     , MIN(e.SAL) as "최소 급여"
+  FROM emp e
+ GROUP BY e.DEPTNO, e.JOB
+-- WHERE e.DEPTNO IS NOT NULL
+;
+-- GROUP BY 절에 없는 것이 SELECT 절에 나오면 오류
+-- GROUP BY 절에 있는 것이 SELECT 절에 없으면 오류
+
+
+
+
+
+-- job 별 급여의 총합, 평균, 최대, 최소 를 구해보자
+SELECT nvl(e.JOB, '직무없음')    as "직무"
+     , TO_CHAR(SUM(e.SAL), '$999,999') as "급여 총합"
+     , TO_CHAR(AVG(e.SAL), '$999,999.99') as "급여 평균"
+     , TO_CHAR(MAX(e.SAL), '$999,999') as "최대 급여"
+     , TO_CHAR(MIN(e.SAL), '$999,999') as "최소 급여"
+  FROM emp e
+ GROUP BY e.JOB
+ ORDER BY e.JOB
+ ;
