@@ -164,3 +164,151 @@ SELECT e1.EMPNO 사번
      , e2.ENAME 상사명
   FROM emp e1, emp e2
  WHERE e1.MGR = e2.EMPNO
+;
+-- 상사가 없는 직원도 조회하고 싶다.
+-- a) e1 테이블이 기준 => LEFT OUTER JOIN
+-- b) (+) 기호를 오른쪽에 붙인다
+SELECT e1.EMPNO 사번
+     , e1.ENAME 사명
+     , e1.MGR 상사번호
+     , '  |'
+     , e2.EMPNO 상사사번
+     , e2.ENAME 상사명
+  FROM emp e1, emp e2
+ WHERE e1.MGR = e2.EMPNO(+)
+;
+
+SELECT e1.EMPNO 사번
+     , e1.ENAME 사명
+     , e1.MGR 상사번호
+     , '  |'
+     , e2.EMPNO 상사사번
+     , e2.ENAME 상사명
+  FROM emp e1 LEFT OUTER JOIN emp e2
+    ON e1.MGR = e2.EMPNO
+;
+
+-- 부하직원이 없는 사람
+
+SELECT e1.EMPNO 사번
+     , e1.ENAME 사명
+     , e1.MGR 상사번호
+     , '  |'
+     , e2.EMPNO 상사사번
+     , e2.ENAME 상사명
+  FROM emp e1, emp e2
+ WHERE e1.MGR(+) = e2.EMPNO
+;
+
+SELECT e1.EMPNO 사번
+     , e1.ENAME 사명
+     , e1.MGR 상사번호
+     , '  |'
+     , e2.EMPNO 상사사번
+     , e2.ENAME 상사명
+  FROM emp e1 RIGHT OUTER JOIN emp e2
+    ON e1.MGR = e2.EMPNO
+;
+
+SELECT e1.EMPNO 사번
+     , e1.ENAME 사명
+     , e1.MGR 상사번호
+     , '  |'
+     , e2.EMPNO 상사사번
+     , e2.ENAME 상사명
+  FROM emp e1 FULL OUTER JOIN emp e2
+    ON e1.MGR = e2.EMPNO
+;
+
+---------------------- 7. 조인과 서브쿼리
+-- (2) 서브쿼리 : SUB-QUERY
+--               SELECT, FROM, WHERE 절에 사용할 수 있다.
+
+-- 문제) BLAKE와 직무가 동일한 직원의 정보를 조회
+-- 1.VLAKE 의 직무를 조회
+SELECT e.JOB
+  FROM emp e
+ WHERE e.ENAME = 'BLAKE'
+;
+
+-- ==> 'MANAGER' 결과를 얻어냄
+
+-- 2. 1의 결과를 WHERE 조건 절에 사용하는 메인 쿼리 작성
+SELECT e.EMPNO
+     , e.ENAME
+     , e.JOB
+  FROM emp e
+ WHERE e.JOB = (SELECT e.JOB
+                    FROM emp e
+                   WHERE e.ENAME = 'BLAKE')
+;
+
+-- ==> 메인 쿼리의 WHERE 절에 () 안에 전달되는 값이 1의 결과인 'MANAGER'
+
+
+--------------------------------------------------------------------
+-- 서브쿼리 실습
+-- 1. 이 회사의 평균 급여보다 급여가 큰 직원들이 목록을 조회
+SELECT e.EMPNO
+     , e.ENAME
+     , e.SAL
+  FROM emp e
+ WHERE e.SAL > (SELECT AVG(e.SAL)
+                  FROM emp e)
+;
+-- 2. 급여가 평균 급여보다 크면서 사번이 7700 번보다 높은 직원 조회
+SELECT e.EMPNO
+     , e.ENAME
+     , e.SAL
+  FROM emp e
+ WHERE e.SAL > (SELECT AVG(e.SAL)
+                  FROM emp e)
+   AND e.EMPNO > 7700
+;
+-- 3. 각 직무별로 최대 급여를 받는 직원 목록을 조회
+SELECT JOB, MAX(SAL)
+  FROM EMP
+ GROUP BY JOB
+;
+SELECT e.EMPNO
+     , e.ENAME
+     , e.SAL
+     , e.JOB
+  FROM emp e
+ WHERE (JOB, SAL) IN (SELECT JOB
+                           , MAX(SAL)
+                        FROM EMP
+                       GROUP BY JOB)
+;
+-- 4. 각 월별 입사인원을 세로로 출력
+SELECT (SELECT e.ENAME 
+          FROM emp e
+         WHERE DECODE(TO_CHAR(e.HIREDATE, 'MM'), '01', 1) = 1) "1월"
+     , (SELECT e.ENAME 
+          FROM emp e
+         WHERE DECODE(TO_CHAR(e.HIREDATE, 'MM'), '02', 2) = 2) "2월"
+     , (SELECT DECODE(TO_CHAR(e.HIREDATE, 'MM'), '05', e.ENAME)
+           FROM emp e
+          WHERE DECODE(TO_CHAR(e.HIREDATE, 'MM'), '05', e.ENAME) IS NOT NULL) "3월"
+  FROM emp e
+;
+
+         SELECT e.ENAME 
+          FROM emp e
+         WHERE DECODE(TO_CHAR(e.HIREDATE, 'MM'), '01', e.ENAME) = e.ENAME;
+
+SELECT (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '01', e.ENAME)) "1월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '02', e.ENAME)) "2월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '03', e.ENAME)) "3월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '04', e.ENAME)) "4월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '05', e.ENAME)) "5월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '06', e.ENAME)) "6월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '07', e.ENAME)) "7월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '08', e.ENAME)) "8월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '09', e.ENAME)) "9월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '10', e.ENAME)) "10월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '11', e.ENAME)) "11월"
+     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '12', e.ENAME)) "12월"
+  FROM emp e
+;
+
