@@ -141,3 +141,62 @@ FROM emp e
 8888	J	400		
 7777	J%JONES	300		
 */
+
+----DDL
+
+-- 실습 1)
+CREATE TABLE CUSTOMER 
+( userid VARCHAR2(4) PRIMARY KEY
+, name VARCHAR2(30) NOT NULL
+, birthyear NUMBER(4)
+, regdate DATE DEFAULT sysdate
+, address VARCHAR2(30)
+); -- Table CUSTOMER이(가) 생성되었습니다.
+
+-- 실습 2)
+SELECT *
+  FROM CUSTOMER
+; 
+
+-- 실습 3)
+CREATE TABLE NEW_CUST
+AS SELECT * 
+     FROM CUSTOMER
+    WHERE 1!=1
+; -- Table NEW_CUST이(가) 생성되었습니다.
+
+-- 실습 4)
+SELECT *
+  FROM NEW_CUST
+; 
+
+-- 실습 5)
+CREATE TABLE salesman
+AS SELECT *
+     FROM emp e
+    WHERE E.JOB = 'SALESMAN'
+; -- Table SALESMAN이(가) 생성되었습니다.
+
+-- 실습 6)
+SELECT *
+  FROM salesman
+; 
+/* EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO
+----------------------------------------------------------------
+7499	ALLEN	SALESMAN	7698	81/02/20	1600	300	 30
+7521	WARD	SALESMAN	7698	81/02/22	1250	500	 30
+7654	MARTIN	SALESMAN	7698	81/09/28	1250	1400 30
+7844	TURNER	SALESMAN	7698	81/09/08	1500	0	 30 */
+
+-- 실습 7)
+ALTER TABLE CUSTOMER ADD phone VARCHAR2(11);
+ALTER TABLE CUSTOMER ADD grade VARCHAR2(30) CHECK(grade IN('VIP', 'GOLD', 'SILVER'));
+--Table CUSTOMER이(가) 변경되었습니다.
+--Table CUSTOMER이(가) 변경되었습니다.
+
+-- 실습 8)
+ALTER TABLE CUSTOMER DROP COLUMN grade; -- Table CUSTOMER이(가) 변경되었습니다.
+
+-- 실습 9)
+ALTER TABLE CUSTOMER MODIFY phone NUMBER(4); -- Table CUSTOMER이(가) 변경되었습니다.
+ALTER TABLE CUSTOMER MODIFY phone VARCHAR2(30); -- Table CUSTOMER이(가) 변경되었습니다.
