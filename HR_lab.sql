@@ -293,41 +293,38 @@ SELECT *
 
 --7. 각 job 별 최대급여를 구하여 출력 job_id, job_title, job별 최대급여 조회
 --19건
-SELECT j.job_id
-     , j.job_title
-     , J.MAX_SALARY     
-  FROM jobs j
+SELECT e.JOB_ID
+     , (SELECT job_title FROM JOBS WHERE JOB_ID = e.JOB_ID) job_title
+     , MAX(salary) "JOB 별 최대급여"
+  FROM employees e
+ GROUP BY JOB_ID
 ;
-/* JOB_ID, JOB_TITLE, MAX_SALARY
+/* JOB_ID, JOB_TITLE, JOB 별 최대급여
 ----------------------------------------------------
-AD_PRES	    President	                    40000
-AD_VP	    Administration Vice President	30000
-AD_ASST 	Administration Assistant	    6000
-FI_MGR	    Finance Manager	                16000
+IT_PROG	    Programmer	                    9000
+AC_MGR	    Accounting Manager	            12008
+AC_ACCOUNT	Public Accountant	            8300
+ST_MAN	    Stock Manager	                8200
+PU_MAN	    Purchasing Manager	            11000
+AD_ASST 	Administration Assistant	    4400
+AD_VP	    Administration Vice President	17000
+SH_CLERK	Shipping Clerk	                4200
 FI_ACCOUNT	Accountant	                    9000
-AC_MGR	    Accounting Manager	            16000
-AC_ACCOUNT	Public Accountant	            9000
-SA_MAN	    Sales Manager	                20080
-SA_REP	    Sales Representative	        12008
-PU_MAN	    Purchasing Manager	            15000
-PU_CLERK	Purchasing Clerk	            5500
-ST_MAN	    Stock Manager	                8500
-ST_CLERK	Stock Clerk	                    5000
-SH_CLERK	Shipping Clerk	                5500
-IT_PROG	    Programmer	                    10000
-MK_MAN	    Marketing Manager	            15000
-MK_REP	    Marketing Representative	    9000
-HR_REP	    Human Resources Representative	9000
-PR_REP	    Public Relations Representative	10500
+FI_MGR	    Finance Manager	                12008
+PU_CLERK	Purchasing Clerk	            3100
+SA_MAN	    Sales Manager	                14000
+MK_MAN	    Marketing Manager	            13000
+PR_REP	    Public Relations Representative	10000
+AD_PRES	    President	                    24000
+SA_REP	    Sales Representative	        11500
+MK_REP	    Marketing Representative	    6000
+ST_CLERK	Stock Clerk	                    3600
+HR_REP	    Human Resources Representative	6500
 */
  
 --8. 각 Job 별 최대급여를 받는 사람의 정보를 출력,
 --  급여가 높은 순서로 출력
-SELECT JOB_ID
-     , MAX(salary)
-  FROM employees
- GROUP BY JOB_ID
-;
+
 ----서브쿼리 이용
 SELECT e.EMPLOYEE_ID
      , e.FIRST_NAME
@@ -341,9 +338,21 @@ SELECT e.EMPLOYEE_ID
                                  , MAX(salary)
                               FROM employees
                              GROUP BY JOB_ID)
+ ORDER BY e.SALARY DESC
  ;
 ----join 이용
-
+-------------------------------------------------------------------------------------- 8. join 아직 안함
+SELECT e.EMPLOYEE_ID
+     , e.FIRST_NAME
+     , e.LAST_NAME
+     , e.EMAIL
+     , e.HIRE_DATE
+     , e.JOB_ID
+     , e.SALARY
+     , j.JOB_TITLE
+  FROM employees e, jobs j
+ WHERE e.JOB_ID = j.JOB_ID 
+;
 --20건
 
 --9. 7번 출력시 job_id 대신 Job_name, manager_id 대신 Manager의 last_name, department_id 대신 department_name 으로 출력
@@ -351,27 +360,179 @@ SELECT e.EMPLOYEE_ID
 
 
 --10. 전체 직원의 급여 평균을 구하여 출력
-
+SELECT AVG(e.salary) -- 6461.831775700934579439252336448598130841
+  FROM employees e
+;
 
 --11. 전체 직원의 급여 평균보다 높은 급여를 받는 사람의 목록 출력. 급여 오름차순 정렬
 --51건
 
+SELECT e.employee_id
+     , e.first_name ||' '|| e.last_name empName
+     , e.salary
+  FROM employees e
+ WHERE e.salary > (SELECT AVG(e.salary)
+                     FROM employees e)
+ ORDER BY e.salary
+;
+/* EMPLOYEE_ID, EMPNAME, SALARY
+--------------------------------
+203	Susan Mavris	    6500
+123	Shanta Vollman	    6500
+165	David Lee	        6800
+113	Luis Popp	        6900
+155	Oliver Tuvault	    7000
+161	Sarath Sewall	    7000
+178	Kimberely Grant 	7000
+164	Mattea Marvins	    7200
+172	Elizabeth Bates	    7300
+171	William Smith	    7400
+154	Nanette Cambrault	7500
+160	Louise Doran	    7500
+111	Ismael Sciarra	    7700
+112	Jose Manuel Urman	7800
+122	Payam Kaufling	    7900
+120	Matthew Weiss	    8000
+159	Lindsey Smith	    8000
+153	Christopher Olsen	8000
+121	Adam Fripp	        8200
+110	John Chen	        8200
+206	William Gietz	    8300
+177	Jack Livingston 	8400
+176	Jonathon Taylor	    8600
+175	Alyssa Hutton	    8800
+158	Allan McEwen	    9000
+152	Peter Hall	        9000
+109	Daniel Faviet	    9000
+103	Alexander Hunold	9000
+157	Patrick Sully	    9500
+151	David Bernstein	    9500
+163	Danielle Greene	    9500
+170	Tayler Fox	        9600
+156	Janette King	    10000
+150	Peter Tucker	    10000
+204	Hermann Baer	    10000
+169	Harrison Bloom	    10000
+149	Eleni Zlotkey	    10500
+162	Clara Vishney	    10500
+174	Ellen Abel	        11000
+148	Gerald Cambrault	11000
+114	Den Raphaely	    11000
+168	Lisa Ozer	        11500
+147	Alberto Errazuriz	12000
+108	Nancy Greenberg	    12008
+205	Shelley Higgins	    12008
+201	Michael Hartstein	13000
+146	Karen Partners	    13500
+145	John Russell	    14000
+102	Lex De Haan	        17000
+101	Neena Kochhar	    17000
+100	Steven King	        24000
+*/
+
 --12. 각 부서별 평균 급여를 구하여 출력
 --12건
-
+SELECT e.department_id
+     , TO_CHAR(AVG(e.salary), 99999.99) 평균급여
+  FROM employees e
+ GROUP BY e.department_id
+;
+/* DEPARTMENT_ID, 평균급여
+--------------------------
+            100	  8601.33
+            30	  4150.00
+                  7000.00
+            90	 19333.33
+            20	  9500.00
+            70	 10000.00
+            110	 10154.00
+            50	  3475.56
+            80	  8955.88
+            40	  6500.00
+            60	  5760.00
+            10	  4400.00
+*/
 --13. 12번의 결과에 department_name 같이 출력
 --12건
-
+SELECT e.department_id
+     , (SELECT DEPARTMENT_NAME
+          FROM departments
+         WHERE department_id = e.department_id) department_name
+     , TO_CHAR(AVG(e.salary), 99999.99) 평균급여
+  FROM employees e
+ GROUP BY e.department_id
+;
 
 --14. employees 테이블이 각 job_id 별 인원수와 job_title을 같이 출력하고 job_id 오름차순 정렬
+-- 19건
+SELECT job_id
+     , (SELECT job_title
+          FROM jobs j
+         WHERE j.job_id = e.job_id) job_title
+     , count(*) 인원수
+  FROM employees e
+ GROUP BY e.job_id
+ ORDER BY job_id
+;
 
+/*  JOB_ID,      JOB_TITLE,    인원수
+---------------------------------------------
+AC_ACCOUNT	Public Accountant	            1
+AC_MGR	    Accounting Manager	            1
+AD_ASST 	Administration Assistant	    1
+AD_PRES	    President	                    1
+AD_VP	    Administration Vice President	2
+FI_ACCOUNT	Accountant	                    5
+FI_MGR	    Finance Manager	                1
+HR_REP	    Human Resources Representative	1
+IT_PROG 	Programmer	                    5
+MK_MAN	    Marketing Manager	            1
+MK_REP	    Marketing Representative	    1
+PR_REP	    Public Relations Representative	1
+PU_CLERK	Purchasing Clerk	            5
+PU_MAN	    Purchasing Manager	            1
+SA_MAN	    Sales Manager	                5
+SA_REP	    Sales Representative	        30
+SH_CLERK	Shipping Clerk	                20
+ST_CLERK	Stock Clerk	                    20
+ST_MAN	    Stock Manager	                5
+*/
 
 --15. employees 테이블의 job_id별 최저급여,
 --   최대급여를 job_title과 함께 출력 job_id 알파벳순 오름차순 정렬
-
-
- 
---16. Employees 테이블에서 인원수가 가장 많은 job_id를 구하고
+-- 19건
+SELECT job_id
+     , (SELECT job_title
+          FROM jobs j
+         WHERE j.job_id = e.job_id) job_title
+     , min(e.salary) 최저급여
+  FROM employees e
+ GROUP BY e.job_id
+ ORDER BY job_id
+;
+/* JOB_ID, JOB_TITLE, 최저급여
+-----------------------------------------
+AC_ACCOUNT	Public Accountant	8300
+AC_MGR	Accounting Manager	12008
+AD_ASST	Administration Assistant	4400
+AD_PRES	President	24000
+AD_VP	Administration Vice President	17000
+FI_ACCOUNT	Accountant	6900
+FI_MGR	Finance Manager	12008
+HR_REP	Human Resources Representative	6500
+IT_PROG	Programmer	4200
+MK_MAN	Marketing Manager	13000
+MK_REP	Marketing Representative	6000
+PR_REP	Public Relations Representative	10000
+PU_CLERK	Purchasing Clerk	2500
+PU_MAN	Purchasing Manager	11000
+SA_MAN	Sales Manager	10500
+SA_REP	Sales Representative	6100
+SH_CLERK	Shipping Clerk	2500
+ST_CLERK	Stock Clerk	2100
+ST_MAN	Stock Manager	5800
+*/
+ --16. Employees 테이블에서 인원수가 가장 많은 job_id를 구하고
 --   해당 job_id 의 job_title 과 그 때 직원의 인원수를 같이 출력
 
 
@@ -380,23 +541,23 @@ SELECT e.EMPLOYEE_ID
 --17.사번,last_name, 급여, 직책이름(job_title), 부서명(department_name), 부서매니저이름
 --  부서 위치 도시(city), 나라(country_name), 지역(region_name) 을 출력
 ----------- 부서가 배정되지 않은 인원 고려 ------
-
+-- 107건
 
 --18.부서 아이디, 부서명, 부서에 속한 인원숫자를 출력
-
+-- 27건
 
 
 --19.인원이 가장 많은 상위 다섯 부서아이디, 부서명, 인원수 목록 출력
-
+-- 5건
 
  
 --20. 부서별, 직책별 평균 급여를 구하여라.
 --   부서이름, 직책이름, 평균급여 소수점 둘째자리에서 반올림으로 구하여라.
-
+-- 19건
 
 
 --21.각 부서의 정보를 부서매니저 이름과 함께 출력(부서는 모두 출력되어야 함)
-
+-- 27건
 
  
 --22. 부서가 가장 많은 도시이름을 출력
@@ -404,6 +565,7 @@ SELECT e.EMPLOYEE_ID
 
 
 --23. 부서가 없는 도시 목록 출력
+-- 16건
 --조인사용
 
 --집합연산 사용
@@ -416,16 +578,17 @@ SELECT e.EMPLOYEE_ID
 
 
 --25. Finance 부서의 평균 급여보다 높은 급여를 받는 직원의 목록 출력
-
+-- 28건
 
 -- 26. 각 부서별 인원수를 출력하되, 인원이 없는 부서는 0으로 나와야 하며
 --     부서는 정식 명칭으로 출력하고 인원이 많은 순서로 정렬.
-
+-- 27건
 
 
 --27. 지역별 등록된 나라의 갯수 출력(지역이름, 등록된 나라의 갯수)
-
+-- 4건
 
 
  
 --28. 가장 많은 나라가 등록된 지역명 출력
+-- 1건
