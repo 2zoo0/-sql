@@ -281,34 +281,32 @@ SELECT e.EMPNO
                        GROUP BY JOB)
 ;
 -- 4. 각 월별 입사인원을 세로로 출력
-SELECT (SELECT e.ENAME 
-          FROM emp e
-         WHERE DECODE(TO_CHAR(e.HIREDATE, 'MM'), '01', 1) = 1) "1월"
-     , (SELECT e.ENAME 
-          FROM emp e
-         WHERE DECODE(TO_CHAR(e.HIREDATE, 'MM'), '02', 2) = 2) "2월"
-     , (SELECT DECODE(TO_CHAR(e.HIREDATE, 'MM'), '05', e.ENAME)
-           FROM emp e
-          WHERE DECODE(TO_CHAR(e.HIREDATE, 'MM'), '05', e.ENAME) IS NOT NULL) "3월"
+-- a) 입사일 데이터에서 월을 추출
+SELECT TO_CHAR(e.HIREDATE, 'FMMM') "월"
   FROM emp e
 ;
 
-         SELECT e.ENAME 
-          FROM emp e
-         WHERE DECODE(TO_CHAR(e.HIREDATE, 'MM'), '01', e.ENAME) = e.ENAME;
-
-SELECT (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '01', e.ENAME)) "1월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '02', e.ENAME)) "2월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '03', e.ENAME)) "3월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '04', e.ENAME)) "4월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '05', e.ENAME)) "5월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '06', e.ENAME)) "6월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '07', e.ENAME)) "7월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '08', e.ENAME)) "8월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '09', e.ENAME)) "9월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '10', e.ENAME)) "10월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '11', e.ENAME)) "11월"
-     , (DECODE(TO_CHAR(e.HIREDATE, 'MM'), '12', e.ENAME)) "12월"
+-- b) 입사 월별 인원 => 그룹화 기준 월
+--    인원을 구하는 함수 => COUNT
+SELECT TO_CHAR(e.HIREDATE, 'FMMM') "월"
+     , COUNT(*) "인원수"
   FROM emp e
+ GROUP BY TO_CHAR(e.HIREDATE, 'FMMM')
 ;
 
+
+SELECT TO_NUMBER(TO_CHAR(e.HIREDATE, 'FMMM'))|| '월' "월"
+     , COUNT(*) "인원수"
+  FROM emp e
+ GROUP BY TO_NUMBER(TO_CHAR(e.HIREDATE, 'FMMM'))
+ ORDER BY TO_NUMBER(TO_CHAR(e.HIREDATE, 'FMMM'))
+;
+
+SELECT a."월" || '월'
+     , a."인원수"
+  FROM (SELECT TO_NUMBER(TO_CHAR(e.HIREDATE, 'FMMM')) "월"
+             , COUNT(*) "인원수"
+          FROM emp e
+         GROUP BY TO_NUMBER(TO_CHAR(e.HIREDATE, 'FMMM'))
+         ORDER BY "월") a
+;
