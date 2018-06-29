@@ -293,47 +293,56 @@ SELECT *
 
 --7. 각 job 별 최대급여를 구하여 출력 job_id, job_title, job별 최대급여 조회
 --19건
-SELECT DISTINCT
-       e.salary
-     , e.JOB_ID
-     , (SELECT j.job_title
-          FROM jobs j
-         WHERE e.job_id = j.job_id) "job_title"
-  FROM employees e
- WHERE (JOB_ID, salary) IN (SELECT JOB_ID
-                                 , MAX(salary)
-                              FROM employees
-                             GROUP BY JOB_ID)
+SELECT j.job_id
+     , j.job_title
+     , J.MAX_SALARY     
+  FROM jobs j
 ;
-/* SALARY, JOB_ID, job_title
+/* JOB_ID, JOB_TITLE, MAX_SALARY
 ----------------------------------------------------
-3600	ST_CLERK	Stock Clerk
-4400	AD_ASST	    Administration Assistant
-14000	SA_MAN	    Sales Manager
-17000	AD_VP	    Administration Vice President
-4200	SH_CLERK	Shipping Clerk
-10000	PR_REP	    Public Relations Representative
-24000	AD_PRES	    President
-12008	AC_MGR	    Accounting Manager
-8200	ST_MAN	    Stock Manager
-9000	FI_ACCOUNT	Accountant
-11500	SA_REP	    Sales Representative
-6500	HR_REP	    Human Resources Representative
-13000	MK_MAN	    Marketing Manager
-9000	IT_PROG	    Programmer
-11000	PU_MAN	    Purchasing Manager
-6000	MK_REP	    Marketing Representative
-8300	AC_ACCOUNT	Public Accountant
-12008	FI_MGR	    Finance Manager
-3100	PU_CLERK	Purchasing Clerk
+AD_PRES	    President	                    40000
+AD_VP	    Administration Vice President	30000
+AD_ASST 	Administration Assistant	    6000
+FI_MGR	    Finance Manager	                16000
+FI_ACCOUNT	Accountant	                    9000
+AC_MGR	    Accounting Manager	            16000
+AC_ACCOUNT	Public Accountant	            9000
+SA_MAN	    Sales Manager	                20080
+SA_REP	    Sales Representative	        12008
+PU_MAN	    Purchasing Manager	            15000
+PU_CLERK	Purchasing Clerk	            5500
+ST_MAN	    Stock Manager	                8500
+ST_CLERK	Stock Clerk	                    5000
+SH_CLERK	Shipping Clerk	                5500
+IT_PROG	    Programmer	                    10000
+MK_MAN	    Marketing Manager	            15000
+MK_REP	    Marketing Representative	    9000
+HR_REP	    Human Resources Representative	9000
+PR_REP	    Public Relations Representative	10500
 */
  
 --8. 각 Job 별 최대급여를 받는 사람의 정보를 출력,
 --  급여가 높은 순서로 출력
+SELECT JOB_ID
+     , MAX(salary)
+  FROM employees
+ GROUP BY JOB_ID
+;
 ----서브쿼리 이용
- 
+SELECT e.EMPLOYEE_ID
+     , e.FIRST_NAME
+     , e.LAST_NAME
+     , e.EMAIL
+     , e.HIRE_DATE
+     , e.JOB_ID
+     , e.SALARY
+  FROM EMPLOYEES e
+ WHERE (JOB_ID, salary) IN (SELECT JOB_ID
+                                 , MAX(salary)
+                              FROM employees
+                             GROUP BY JOB_ID)
+ ;
 ----join 이용
-
 
 --20건
 
