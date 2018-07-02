@@ -318,3 +318,242 @@ UPDATE member m
     것이 기본이므로 항상 주의!!!!
 
 */
+
+
+-- UPDATE 구문에 SELECT 서브쿼리 사용
+-- 'M08' 아이디의 phone, gender 수정
+UPDATE member m
+   SET m.PHONE = '3318'
+     , M.GENDER = 'M'
+ WHERE m.MEMEBR_ID = 'M08'
+;
+
+-- 서브쿼리 적용
+UPDATE member m
+   SET m.PHONE = '3318'
+     , M.GENDER = 'M'
+ WHERE m.ADDRESS = (SELECT M.address
+                      FROM member m
+                     WHERE m.MEMBER_ID = 'M08')
+;
+-- 1 행 이(가) 업데이트되었습니다.
+
+-- 'M13' 유재성 멤버의 성별 업데이트
+UPDATE member m
+   SET M.gender =(SELECT M.gender
+                    FROM member m
+                   WHERE m.MEMBER_ID = 'M08')
+ WHERE m.MEMBER_ID = 'M13'
+;
+
+UPDATE member m
+  SET M.address = '대전'
+ WHERE M.address is null
+;
+commit;
+-----------------------------------------------------------------
+
+--- 1. WHERE 조건이 있는 DELETE 구문
+
+
+-- 삭제 전 커밋
+commit;
+-- gender 가 'F' 인 데이터를 삭제\
+DELETE member m
+ WHERE M.gender = 'R'
+; 
+
+-- 0개 행 이(가) 삭제되었습니다.
+-- 이 결과는 gender에 R값이 없으므로
+-- 삭제된 행이 없는 결과를 얻은 것 뿐
+-- 구문 오류는 아님, 논리적으로 잘못된 결과인 것.
+
+DELETE member m
+ WHERE m.GENDER = 'F'
+;
+
+
+rollback;
+
+
+
+-- M99 1행을 삭제하고 싶다면 PK로 삭제하자
+DELETE member m
+ WHERE m.MEMBER_ID = 'M99'
+;
+-- 1 행 이(가) 삭제되었습니다.
+commit;
+-- 커밋 완료.
+
+--- 2. WHERE 조건이 없는 DELETE 구문
+DELETE member;
+-- 13개 행 이(가) 삭제되었습니다.
+
+rollback; 
+-- 롤백 완료.
+
+--- 3 DELETE 의 WHERE 에 서브쿼리 조합
+--  주소가 대전인 사람을 모두 삭제
+--- (1) 주소가 대전인 사람을 조회
+SELECT M.member_id
+  FROM member m
+ WHERE m.address = '대전'
+;
+
+-- (2) 삭제하는 메인 쿼리 작성
+DELETE member m
+ WHERE m.MEMBER_ID IN (SELECT M.MEMBER_ID
+                        FROM member m
+                       WHERE m.address = '대전')
+;
+-- 5개 행 이(가) 삭제되었습니다.
+
+rollback; 
+-- 롤백 완료.
+
+-- 위와 동일한 작업을 일반 where 로 삭제
+DELETE member m
+ WHERE m.MEMBER_ID ='대전'
+;
+
+-----------------------------------------------------------------------------------------
+
+-- DELETE vs. TRUNCATE
+/*
+  1. TRUNCATE는 DDL 에 속하는 명령어
+     ROLLBACK 지점을 생성하지 않음
+     따라서 한 번 실행된 DDL을 되돌릴 수 없음.
+     
+  2. TRUNCATE 는 WHERE 절 조합이 안되므로
+     특정 데이터 선별하여 삭제하는 것이 불가능.
+     
+     사용시 주의
+*/
+
+-- new_member 테이블을 TRUNCATE 로 날려버조
+
+-- 실행 전 되돌아갈 커밋 지점 생성
+
+commit;
+
+-- new_member 내용 확인
+SELECT m.*
+  FROM new_member m
+;
+
+-- TRUNCATE 로 new_member 테이블 잘라내기
+TRUNCATE TABLE new_member;
+-- Table NEW_MEMBER이(가) 잘렸습니다.
+
+-- new_member 내용 확인
+SELECT m.*
+  FROM new_member m
+;
+
+-- 되돌리기 시도
+ROLLBACK;
+
+-- DDL 종류의 구문은 실행 즉시 commit이 이루어짐.
+-- 롤백의 시점이 이미 DDL 실행 다음 시점으로 잡힘.
+------------------------------------------------------------------------------
+
+-- TCL : Transaction Control Language
+-- 1) COMMIT
+-- 2) ROLLBACK
+
+-- 3) SAVEPOINT
+--- 1. new_member 테이블에 1행 추가
+INSERT INTO new_member(member_id, MEMBER_NAME)
+VALUES ('M01', '홍길동')
+;
+
+-- 1행 추가 상태까지 중간 저장
+SAVEPOINT do_insert;
+-- Savepoint이(가) 생성되었습니다.
+
+--- 2. '홍길동' 데이터의 주소를 수정
+UPDATE new_member m
+   SET M.address = '율도국'
+ WHERE M.member_id = 'M01'
+; -- 1 행 이(가) 업데이트되었습니다.
+
+-- 수정 상태까지 중간 저장
+SAVEPOINT do_update_addr; -- Savepoint이(가) 생성되었습니다.
+
+--- 3. '홍길동' 데이터의 전화번호를 수정
+UPDATE new_member m
+   SET M.phone = '0001'
+ WHERE M.member_id = 'M01'
+; -- 1 행 이(가) 업데이트되었습니다.
+
+SAVEPOINT do_update_phone; -- Savepoint이(가) 생성되었습니다.
+
+--- 4. '홍길동' 데이터의 성별을 수정
+UPDATE new_member m
+   SET M.gender = 'M'
+ WHERE M.member_id = 'M01'
+; -- 1 행 이(가) 업데이트되었습니다.
+
+SAVEPOINT do_update_gender; -- Savepoint이(가) 생성되었습니다.
+
+
+-------------------------------------------
+-- 홍길동 데이터의 ROLLBACK 시나리오
+
+-- 1. 주소 수정까지는 맞는데, 전화번호, 성별 수정은 잘못됨
+--   : 디돌아가야 할 SAVEPOINT = do_update_addr
+ROLLBACK TO SAVEPOINT do_update_gender;
+
+-- 2. 주소, 전화번호까지 수정이 맞고, 성별 수정이 잘못됨
+ROLLBACK TO do_update_phone;
+/*
+    ORA-01086: savepoint 'DO_UPDATE_PHONE' never established in this session or is invalid
+    SAVEPOINT 의 순서가 do_update_addr 이 앞서기 때문에 
+    do_update_addr 까지 롤백하면 그 후에 생성된 SAVEPOINT는 삭제됨.
+
+*/
+-- 3. 2번 수행 후 어디까지 롤백이 가능한가
+ROLLBACK TO do_update_addr;
+ROLLBACK TO do_insert;
+ROLLBACK;
+
+-- SAVEPOINT 로 한번 되돌아 가면 될돌아간 시점 이후
+-- 생성된 SAVEPOINT 는 무효화 됨.
+
+
+-------------------------------------------------------------------------------------------------------
+
+-- SEQUENCE : 기본 키 등으로 사용되는 일련번호 생성 객체
+
+-- 1. 시작번호 : 1, 최대 : 30, 사이클이 없는 시퀀스 생성
+CREATE SEQUENCE seq_member_id
+ START WITH 1
+MAXVALUE 30
+NOCYCLE
+;
+-- Sequence SEQ_MEMBER_ID이(가) 생성되었습니다.
+
+-- 시퀀스가 생성되면 유저 딕셔너리에 정보가 저장됨
+-- : user_sequences 
+
+SELECT S.sequence_name
+     , S.min_value
+     , S.max_value
+     , S.increment_by
+     , s.CYCLE_FLAG
+  FROM user_sequences s
+ WHERE S.sequence_name = 'SEQ_MEMBER_ID'
+;
+
+
+
+-- 사용자의 객체가 저장되는 딕셔너리 테이블
+-- : user_objects
+SELECT o.object_name
+     , o.object_type
+     , o.OBJECT_ID
+  FROM user_objects o
+;
+
+
+------------------------------------------------------------------------------
