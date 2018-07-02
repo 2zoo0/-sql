@@ -221,3 +221,73 @@ SELECT u.*
 ;
 -- 'IDX_CUST_USERID' 인덱스가 없으므로 삭제된 것을 확인.
 
+
+-- PL/SQL 실습 1)
+
+SET SERVEROUTPUT ON
+
+BEGIN
+	
+
+	DBMS_OUTPUT.PUT_LINE('Hello, PL/SQL World');
+
+END;
+/
+/*
+Hello, PL/SQL World
+
+
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+
+*/
+
+-- 실습 2)
+
+SET SERVEROUTPUT ON
+DECLARE
+    hello VARCHAR2(20) := 'Hello, PL/SQL World';
+BEGIN
+	
+    
+	DBMS_OUTPUT.PUT_LINE(hello);
+
+END;
+/
+/*
+Hello, PL/SQL World
+
+
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+*/
+
+-- 실습 3)
+CREATE OR REPLACE PROCEDURE log_execution
+(   userid    IN VARCHAR2
+  , log_date IN DATE)
+IS
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE(userid || ' : ' || log_date);
+    
+END sp_maxim;
+/
+
+
+
+
+
+CREATE OR REPLACE PROCEDURE sp_maxim
+(   name    IN  VARCHAR2
+  , message IN  VARCHAR2
+  , result  OUT VARCHAR2)
+IS
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE(name || ' : ' || MESSAGE);
+    -- result OUT 변수에 저장
+    result := name || ' : ' || message;
+END sp_maxim;
+/
+
+VAR v_log_user VARCHAR2(200)
+VAR v_log_date DATE
