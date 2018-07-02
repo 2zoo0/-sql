@@ -260,34 +260,91 @@ Hello, PL/SQL World
 PL/SQL 프로시저가 성공적으로 완료되었습니다.
 */
 
+
+
 -- 실습 3)
+CREATE TABLE log_table(
+  userid VARCHAR2(20)
+, log_date DATE);
+
+SET SERVEROUTPUT ON
+;
+-- serveroutput ON SIZE UNLIMITED FORMAT WORD_WRAPPED
+
+
 CREATE OR REPLACE PROCEDURE log_execution
-(   userid    IN VARCHAR2
-  , log_date IN DATE)
 IS
-BEGIN
-
-    DBMS_OUTPUT.PUT_LINE(userid || ' : ' || log_date);
+    userid VARCHAR2(20) := 'myid';
     
-END sp_maxim;
+BEGIN
+    INSERT INTO log_table VALUES (userid, sysdate);
+    DBMS_OUTPUT.PUT_LINE(userid || ' : ' || sysdate);
+
+END log_execution;
 /
+EXECUTE log_execution
+
+/*
+Procedure LOG_EXECUTION이(가) 컴파일되었습니다.
+
+myid : 18/07/03
 
 
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+*/
+SELECT l.*
+  FROM log_table l
+;
+/*
+USERID, LOG_DATE
+-------------------
+myid	18/07/03
+*/
 
 
-
-CREATE OR REPLACE PROCEDURE sp_maxim
-(   name    IN  VARCHAR2
-  , message IN  VARCHAR2
-  , result  OUT VARCHAR2)
+-- 실습 4)
+CREATE OR REPLACE PROCEDURE log_execution_sp
+(  log_user  IN  VARCHAR2
+ , log_date  OUT  DATE)
 IS
 BEGIN
-
-    DBMS_OUTPUT.PUT_LINE(name || ' : ' || MESSAGE);
-    -- result OUT 변수에 저장
-    result := name || ' : ' || message;
-END sp_maxim;
+    log_date := sysdate;
+    INSERT INTO log_table VALUES (log_user, log_date);
+    
+    DBMS_OUTPUT.PUT_LINE('INSERT INTO log_table VALUES ('||log_user||', '||log_date||')');
+END log_execution_sp;
 /
+-- Procedure LOG_EXECUTION_SP이(가) 컴파일되었습니다.
 
-VAR v_log_user VARCHAR2(200)
-VAR v_log_date DATE
+VAR v_log_date VARCHAR2
+VAR v_log_date
+/*
+variable v_log_date
+datatype VARCHAR2
+*/
+
+PRINT v_log_date 
+/*
+V_LOG_DATE
+--------------------------------------------------------------------------------
+*/
+
+EXECUTE log_execution_sp('2zoo0', :v_log_date);
+
+/**************************************************
+
+INSERT INTO log_table VALUES (2zoo0, 18/07/03)
+
+
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+
+***************************************************/
+SELECT l.*
+  FROM log_table l
+;
+/*
+USERID, LOG_DATE
+-------------------
+myid	18/07/03
+2zoo0	18/07/03
+**/
