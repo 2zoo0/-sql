@@ -198,38 +198,55 @@ UPDATE emp e SET E.COMM = 100
 
 SELECT e.JOB
       FROM emp e
+      WHERE e.EMPNO = 7902
     ;
--- 실습 11)--------------------------------------------------------------------
+-- 실습 11)
+SELECT e.comm
+  FROM emp e
+ WHERE e.empno = 7521; -- 500
+ 
+
 CREATE OR REPLACE PROCEDURE sp_set_comm
-( v_comm    OUT EMP.COMM%TYPE)
+( v_empno       IN  EMP.EMPNO%TYPE 
+, v_comm        OUT EMP.COMM%TYPE   
+)
 IS
-    v_job      EMP.JOB%TYPE;
+   v_job         EMP.JOB%TYPE;
 BEGIN
-    SELECT e.job
-      INTO v_job
+    DBMS_OUTPUT.PUT_LINE(v_empno);
+    SELECT e.JOB, e.COMM
+      INTO v_job, v_comm
       FROM emp e
-    ;
-    
-    UPDATE emp e SET E.COMM = v_comm
-     WHERE e.job = v_job;
-    
-    IF v_job = 'SALESMAN'   THEN v_comm := 1000;
-                                UPDATE emp e SET E.COMM = v_comm
-                                 WHERE e.job = v_job;
-    ELSIF v_job = 'MANAGER' THEN v_comm := 1500;
-                                UPDATE emp e SET E.COMM = v_comm
-                                 WHERE e.job = v_job;
+     WHERE e.EMPNO = v_empno
+    ; 
+    DBMS_OUTPUT.PUT_LINE(v_job);
+    IF      v_job = 'SALESMAN'  THEN v_comm := 1000; 
+    ELSIF   v_job = 'MANAGER'   THEN v_comm := 1500;
     ELSE v_comm := 500;
     END IF;
-    
+    UPDATE emp e SET COMM = v_comm WHERE e.EMPNO = v_empno;
 END sp_set_comm;
 /
 
 var v_set_comm NUMBER
 
-EXECUTE sp_set_comm(:v_set_comm)
-PRINT v_set_comm
+EXEC sp_set_comm(7499, :v_set_comm)
 
+/**
+Procedure SP_SET_COMM이(가) 컴파일되었습니다.
+
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+**/
+
+PRINT v_set_comm
+/**
+V_SET_COMM
+----------
+      1000
+**/
+SELECT e.comm
+  FROM emp e
+ WHERE e.empno = 7521; -- 1000
 --  실습 12)
 DECLARE 
     cnt         NUMBER :=0;
@@ -261,10 +278,9 @@ PL/SQL 프로시저가 성공적으로 완료되었습니다.
 
 -- 실습 13)
 DECLARE 
-    cnt         NUMBER := 10;
+    cnt         NUMBER := 0;
 BEGIN
-    WHILE cnt > 1 LOOP
-        cnt := cnt - 1;
+    FOR cnt IN REVERSE 1 .. 10 LOOP
         IF MOD(cnt, 2) = 0   THEN DBMS_OUTPUT.PUT_LINE(cnt);
         END IF;
     END LOOP;
@@ -272,6 +288,7 @@ END;
 /
 
 /**
+10
 8
 6
 4
@@ -282,3 +299,219 @@ PL/SQL 프로시저가 성공적으로 완료되었습니다.
 **/
 
 -- 실습 14)
+DECLARE 
+    cnt         NUMBER := 0;
+BEGIN
+    WHILE cnt < 10 LOOP
+        cnt := cnt + 1;
+        DBMS_OUTPUT.PUT_LINE(cnt);
+        
+    END LOOP;
+END;
+/
+/*
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+
+
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+
+*/
+
+-- 실습 15)
+
+CREATE OR REPLACE FUNCTION emp_sal_avg
+( v_job       IN EMP.JOB%TYPE)
+RETURN NUMBER
+IS
+    v_avg_sal   EMP.SAL%TYPE;
+BEGIN
+    SELECT avg(e.sal)
+      INTO v_avg_sal
+      FROM emp e
+     WHERE e.job = v_job
+    ;
+    
+    RETURN ROUND(v_avg_sal);
+
+END emp_sal_avg;
+/
+
+-- Function EMP_SAL_AVG이(가) 컴파일되었습니다.
+
+-- 실습 16)
+SELECT emp_sal_avg('CLERK') emp_sal_avg
+  FROM dual;
+  
+/**
+EMP_SAL_AVG
+------------
+  1017
+**/
+  
+-- 실습 17)
+SELECT e.ename
+     , E.SAL
+  FROM emp e
+ WHERE e.sal >= emp_sal_avg('CLERK');
+ /***************
+ ALLEN	1600
+WARD	1250
+JONES	2975
+MARTIN	1250
+BLAKE	2850
+CLARK	2450
+KING	5000
+TURNER	1500
+FORD	3000
+MILLER	1300
+ ***************/
+ 
+-- 실습 18)
+CREATE OR REPLACE PROCEDURE sp_dept_row
+    ( v_deptno      IN DEPT.DEPTNO%TYPE
+    , v_dname       IN DEPT.dname%TYPE
+    , v_loc         IN DEPT.loc%TYPE
+    , v_msg         OUT VARCHAR2
+    )
+IS   
+BEGIN
+    INSERT INTO dept (deptno, dname, loc)
+    VALUES (v_deptno, v_dname, v_loc);
+    v_msg := v_deptno||'부서를 추가했습니다';
+    commit;
+    
+    
+    EXCEPTION  
+        WHEN DUP_VAL_ON_INDEX
+        THEN 
+             UPDATE dept d
+                SET d.dname = v_dname
+                  , d.loc = v_loc 
+              WHERE d.deptno = v_deptno
+             ;
+             
+             v_msg := v_deptno||' 부서가 이미 존재하여 수정합니다.';
+             
+END sp_dept_row;
+/
+ show errors
+
+VAR sp_dept_row_msg VARCHAR2
+
+EXEC sp_dept_row(60,'STUDY','seoul', :sp_dept_row_msg);
+
+PRINT sp_dept_row_msg
+
+/**
+Procedure SP_DEPT_ROW이(가) 컴파일되었습니다.
+
+
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+
+
+SP_DEPT_ROW_MSG
+--------------------------------------------------------------------------------
+60 부서가 이미 존재하여 수정합니다.
+**/
+
+
+
+/***********************           VIEW      *********************************/
+
+-- 실습 9 )
+
+
+CREATE TABLE CUSTOMER 
+( userid VARCHAR2(4) PRIMARY KEY
+, name VARCHAR2(30) NOT NULL
+, birthyear NUMBER(4)
+, regdate DATE DEFAULT sysdate
+, address VARCHAR2(30)
+);
+ALTER TABLE CUSTOMER ADD phone VARCHAR2(11);
+ALTER TABLE CUSTOMER ADD grade VARCHAR2(30) CHECK(grade IN('VIP', 'GOLD', 'SILVER'));
+/*********************************************************************************
+기존 customer table 생성
+*********************************************************************************/
+
+CREATE VIEW  v_cust_general_regdt
+(이름, 등록일)
+AS
+SELECT c.userid as "이름"
+     , c.regdate as "등록일"
+ FROM customer c
+WHERE c.grade = 'General'
+;
+-- View V_CUST_GENERAL_REGDT이(가) 생성되었습니다.
+
+-- 실습 10)
+SELECT v.*
+ FROM v_cust_general_regdt v
+;
+
+-- 내용 없음
+
+desc v_cust_general_regdt
+/**
+이름  널?       유형          
+--- -------- ----------- 
+이름 NOT NULL VARCHAR2(4) 
+등록일          DATE    
+**/
+
+-- 실습 11) 
+DESC USER_VIEWS
+/**
+이름               널?       유형             
+---------------- -------- -------------- 
+VIEW_NAME        NOT NULL VARCHAR2(30)   
+TEXT_LENGTH               NUMBER         
+TEXT                      LONG           
+TYPE_TEXT_LENGTH          NUMBER         
+TYPE_TEXT                 VARCHAR2(4000) 
+OID_TEXT_LENGTH           NUMBER         
+OID_TEXT                  VARCHAR2(4000) 
+VIEW_TYPE_OWNER           VARCHAR2(30)   
+VIEW_TYPE                 VARCHAR2(30)   
+SUPERVIEW_NAME            VARCHAR2(30)   
+EDITIONING_VIEW           VARCHAR2(1)    
+READ_ONLY                 VARCHAR2(1)    
+**/
+
+-- 실습 12)
+SELECT u.view_name
+     , u.text
+  FROM user_views u
+;
+
+/**
+VIEW_NAME,              TEXT
+---------------------- --------------------------------
+V_CUST_GENERAL_REGDT	"SELECT c.userid as "이름"
+                              , c.regdate as "등록일"
+                          FROM customer c
+                         WHERE c.grade = 'General'"
+**/
+-- 실습 13)
+DROP VIEW v_cust_general_regdt;
+-- View V_CUST_GENERAL_REGDT이(가) 삭제되었습니다.
+
+-- 실습 14)
+SELECT u.view_name
+     , u.text
+  FROM user_views u
+;
+/**
+VIEW_NAME,  TEXT
+----------- ----------------
+
+**/
